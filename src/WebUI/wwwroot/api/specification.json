@@ -13,22 +13,16 @@
         ],
         "operationId": "Account_Create",
         "requestBody": {
+          "x-name": "command",
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
-                "properties": {
-                  "ApplicationUserId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Name": {
-                    "type": "string",
-                    "nullable": true
-                  }
-                }
+                "$ref": "#/components/schemas/CreateAccountCommand"
               }
             }
-          }
+          },
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "200": {
@@ -453,6 +447,39 @@
         ]
       }
     },
+    "/api/Transaction/Create": {
+      "post": {
+        "tags": [
+          "Transaction"
+        ],
+        "operationId": "Transaction_Create",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransactionCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/WeatherForecast": {
       "get": {
         "tags": [
@@ -479,6 +506,20 @@
   },
   "components": {
     "schemas": {
+      "CreateAccountCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",
         "additionalProperties": false,
@@ -702,6 +743,28 @@
             "format": "int32"
           },
           "title": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateTransactionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "string",
+            "nullable": true
+          },
+          "transceiverAccountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "receiverAccountNumber": {
             "type": "string",
             "nullable": true
           }

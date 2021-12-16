@@ -15,7 +15,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountClient {
-    create(applicationUserId: number | undefined, name: string | null | undefined): Observable<number>;
+    create(command: CreateAccountCommand): Observable<number>;
 }
 
 @Injectable({
@@ -31,23 +31,18 @@ export class AccountClient implements IAccountClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    create(applicationUserId: number | undefined, name: string | null | undefined) : Observable<number> {
+    create(command: CreateAccountCommand) : Observable<number> {
         let url_ = this.baseUrl + "/api/Account/Create";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = new FormData();
-        if (applicationUserId === null || applicationUserId === undefined)
-            throw new Error("The parameter 'applicationUserId' cannot be null.");
-        else
-            content_.append("ApplicationUserId", applicationUserId.toString());
-        if (name !== null && name !== undefined)
-            content_.append("Name", name.toString());
+        const content_ = JSON.stringify(command);
 
         let options_ : any = {
             body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -652,6 +647,76 @@ export class TodoListsClient implements ITodoListsClient {
     }
 }
 
+export interface ITransactionClient {
+    create(command: CreateTransactionCommand): Observable<number>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class TransactionClient implements ITransactionClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    create(command: CreateTransactionCommand) : Observable<number> {
+        let url_ = this.baseUrl + "/api/Transaction/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+}
+
 export interface IWeatherForecastClient {
     get(): Observable<WeatherForecast[]>;
 }
@@ -723,6 +788,46 @@ export class WeatherForecastClient implements IWeatherForecastClient {
         }
         return _observableOf<WeatherForecast[]>(<any>null);
     }
+}
+
+export class CreateAccountCommand implements ICreateAccountCommand {
+    applicationUserId?: number;
+    name?: string | undefined;
+
+    constructor(data?: ICreateAccountCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.applicationUserId = _data["applicationUserId"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateAccountCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateAccountCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["applicationUserId"] = this.applicationUserId;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICreateAccountCommand {
+    applicationUserId?: number;
+    name?: string | undefined;
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {
@@ -1258,6 +1363,54 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
 export interface IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+}
+
+export class CreateTransactionCommand implements ICreateTransactionCommand {
+    description?: string | undefined;
+    amount?: string | undefined;
+    transceiverAccountNumber?: string | undefined;
+    receiverAccountNumber?: string | undefined;
+
+    constructor(data?: ICreateTransactionCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.description = _data["description"];
+            this.amount = _data["amount"];
+            this.transceiverAccountNumber = _data["transceiverAccountNumber"];
+            this.receiverAccountNumber = _data["receiverAccountNumber"];
+        }
+    }
+
+    static fromJS(data: any): CreateTransactionCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTransactionCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
+        data["amount"] = this.amount;
+        data["transceiverAccountNumber"] = this.transceiverAccountNumber;
+        data["receiverAccountNumber"] = this.receiverAccountNumber;
+        return data; 
+    }
+}
+
+export interface ICreateTransactionCommand {
+    description?: string | undefined;
+    amount?: string | undefined;
+    transceiverAccountNumber?: string | undefined;
+    receiverAccountNumber?: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {

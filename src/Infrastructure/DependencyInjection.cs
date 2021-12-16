@@ -29,7 +29,7 @@ public static class DependencyInjection
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
         }
         services.AddEventStoreClient(configuration.GetConnectionString("EventStoreConnectionString"));
-        services.AddSingleton<IEventStoreDb>(provider => provider.GetRequiredService<EventStoreDb>());
+        services.AddSingleton<IEventStoreDb, EventStoreDb>();
         //services.AddSingleton<EventStoreDb>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
