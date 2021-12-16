@@ -11,37 +11,36 @@ public class CreateAccountCommand : IRequest<int>
     public string? Name { get; set; }
 }
 
-public class CreatePersonCommandHandler : IRequestHandler<CreateAccountCommand, int>
+public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, int>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IDateTime _dateTime;
 
-    public CreatePersonCommandHandler(IApplicationDbContext context)
+    public CreateAccountCommandHandler(IApplicationDbContext context, IDateTime dateTime)
     {
         _context = context;
+        _dateTime = dateTime;
     }
 
     public async Task<int> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
-        if (request.Name == null)
-            request.Name = "My Account";
-        static ulong RandomDigits(int length)
+        static string RandomDigits(int length)
         {
             var random = new Random();
             string s = string.Empty;
             for (int i = 0; i < length; i++)
                 s = String.Concat(s, random.Next(10).ToString());
-            return ulong.Parse(s);
+            return s;
         }
-        var accountNumber = RandomDigits(8);
-        var time = DateTime.Now;
+        var accountNumber = RandomDigits(19);
         var entity = new Account
         {
             ApplicationUserId = request.ApplicationUserId,
             AccountNumber = accountNumber,
             Name = request.Name,
             Amount = 0,
-            CreatedDate = time,
-            LastModified = time,
+            Created = _dateTime.Now,
+            LastModified = _dateTime.Now,
         };
 
         entity.DomainEvents.Add(new AccountCreatedEvent(entity));

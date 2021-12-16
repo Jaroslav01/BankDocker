@@ -4,10 +4,10 @@ namespace CleanArchitecture.Domain.Entities;
 
 public class Transaction : AuditableEntity
 {
-    [Key]
     public int Id { get; set; }
-    public int AccountId { get; set; }
     public string? Description { get; set; }
     public string? Amount { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public string? TransceiverAccountNumber { get; set; }
+    public string? ReceiverAccountNumber { get; set; }
+    public List<DomainEvent> DomainEvents { get; set; } = new List<DomainEvent>();
 }

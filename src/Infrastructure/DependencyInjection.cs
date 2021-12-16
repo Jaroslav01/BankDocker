@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Infrastructure.EventStore;
 using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
@@ -27,7 +28,9 @@ public static class DependencyInjection
                     configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
         }
-
+        services.AddEventStoreClient(configuration.GetConnectionString("EventStoreConnectionString"));
+        services.AddSingleton<IEventStoreDb>(provider => provider.GetRequiredService<EventStoreDb>());
+        //services.AddSingleton<EventStoreDb>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<IDomainEventService, DomainEventService>();

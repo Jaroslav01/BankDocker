@@ -66,6 +66,19 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         await DispatchEvents(events);
 
         return result;
+        /*
+         * var events = Enumerable.Range(0, 20)
+				.Select(r => new EventData(
+					Uuid.NewUuid(),
+					"some-event",
+					Encoding.UTF8.GetBytes("{\"id\": \"" + r + "\" \"value\": \"some value\"}")));
+
+			await _eventStoreClient.AppendToStreamAsync(
+				"some-stream",
+				StreamState.Any,
+				events);
+			var result = _eventStoreClient.ReadAllAsync(Direction.Backwards, Position.End);
+        */
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

@@ -7,7 +7,7 @@ public class Account : AuditableEntity, IHasDomainEvent
 {
     public int Id { get; set; }
     public int ApplicationUserId { get; set; }
-    public ulong AccountNumber { get; set; }
+    public string? AccountNumber { get; set; }
     public string? Name { get; set; }
     public int Amount { get; set; }
     public IList<Transaction> Transactions { get; private set; } = new List<Transaction>();
@@ -26,5 +26,4 @@ public class Account : AuditableEntity, IHasDomainEvent
         }
     }
     public List<DomainEvent> DomainEvents { get; set; } = new List<DomainEvent>();
-    public DateTime CreatedDate { get; set; }
 }
