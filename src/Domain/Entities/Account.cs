@@ -9,7 +9,7 @@ public class Account : AuditableEntity, IHasDomainEvent
     public int ApplicationUserId { get; set; }
     public string? AccountNumber { get; set; }
     public string? Name { get; set; }
-    public int Amount { get; set; }
+    public long Amount { get; set; }
     public IList<Transaction> Transactions { get; private set; } = new List<Transaction>();
     private bool _done;
     public bool Done

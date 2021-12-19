@@ -15,7 +15,7 @@ internal class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
     {
         builder.Ignore(e => e.DomainEvents);
 
-        builder.Property(t => t.Created)
+        builder.Property(t => t.Amount)
             .HasMaxLength(200)
             .IsRequired();
     }

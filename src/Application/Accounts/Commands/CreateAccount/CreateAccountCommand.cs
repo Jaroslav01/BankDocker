@@ -3,7 +3,7 @@ using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.Events;
 using MediatR;
 
-namespace CleanArchitecture.Application.Accounts.Commands.CreatePerson;
+namespace CleanArchitecture.Application.Accounts.Commands.CreateAccount;
 
 public class CreateAccountCommand : IRequest<int>
 {
@@ -39,8 +39,6 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             AccountNumber = accountNumber,
             Name = request.Name,
             Amount = 0,
-            Created = _dateTime.Now,
-            LastModified = _dateTime.Now,
         };
 
         entity.DomainEvents.Add(new AccountCreatedEvent(entity));

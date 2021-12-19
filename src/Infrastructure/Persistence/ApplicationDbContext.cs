@@ -32,10 +32,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
     }
 
     public DbSet<TodoList> TodoLists => Set<TodoList>();
-
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
-    public DbSet<Key> Keys { get; set; }
+//    public DbSet<Key> Keys { get; set; }
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
@@ -66,19 +66,6 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         await DispatchEvents(events);
 
         return result;
-        /*
-         * var events = Enumerable.Range(0, 20)
-				.Select(r => new EventData(
-					Uuid.NewUuid(),
-					"some-event",
-					Encoding.UTF8.GetBytes("{\"id\": \"" + r + "\" \"value\": \"some value\"}")));
-
-			await _eventStoreClient.AppendToStreamAsync(
-				"some-stream",
-				StreamState.Any,
-				events);
-			var result = _eventStoreClient.ReadAllAsync(Direction.Backwards, Position.End);
-        */
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

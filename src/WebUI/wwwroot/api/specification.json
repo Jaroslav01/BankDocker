@@ -36,7 +36,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
     "/api/TodoItems": {
@@ -477,7 +482,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
     "/api/WeatherForecast": {
@@ -757,16 +767,14 @@
             "nullable": true
           },
           "amount": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int64"
           },
           "transceiverAccountNumber": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "receiverAccountNumber": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         }
       },

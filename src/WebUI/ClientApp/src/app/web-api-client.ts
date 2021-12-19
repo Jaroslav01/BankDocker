@@ -1367,9 +1367,9 @@ export interface IUpdateTodoListCommand {
 
 export class CreateTransactionCommand implements ICreateTransactionCommand {
     description?: string | undefined;
-    amount?: string | undefined;
-    transceiverAccountNumber?: string | undefined;
-    receiverAccountNumber?: string | undefined;
+    amount?: number;
+    transceiverAccountNumber?: string;
+    receiverAccountNumber?: string;
 
     constructor(data?: ICreateTransactionCommand) {
         if (data) {
@@ -1408,9 +1408,9 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
 
 export interface ICreateTransactionCommand {
     description?: string | undefined;
-    amount?: string | undefined;
-    transceiverAccountNumber?: string | undefined;
-    receiverAccountNumber?: string | undefined;
+    amount?: number;
+    transceiverAccountNumber?: string;
+    receiverAccountNumber?: string;
 }
 
 export class WeatherForecast implements IWeatherForecast {

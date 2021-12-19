@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace CleanArchitecture.Application.Transactions.Commands;
+namespace CleanArchitecture.Application.Transactions.Commands.CreateTransaction;
 
 public class CreateTransactionCommandValidator : AbstractValidator<CreateTransactionCommand>
 {
