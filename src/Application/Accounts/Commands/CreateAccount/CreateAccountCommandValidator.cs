@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Application.Accounts.Commands.CreatePerson;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace CleanArchitecture.Application.Accounts.Commands.CreateAccount;
 

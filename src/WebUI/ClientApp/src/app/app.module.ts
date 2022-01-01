@@ -1,45 +1,50 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
-import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { TodoComponent } from './todo/todo.component';
-import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
-import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { AppRoutingModule } from './app-routing.module';
-import { TokenComponent } from './token/token.component';
+import { ExtraOptions, PreloadAllModules, RouterModule } from '@angular/router';
+import { MarkdownModule } from 'ngx-markdown';
+import { FuseModule } from '@fuse';
+import { FuseConfigModule } from '@fuse/services/config';
+import { FuseMockApiModule } from '@fuse/lib/mock-api';
+import { CoreModule } from 'app/core/core.module';
+import { appConfig } from 'app/core/config/app.config';
+import { mockApiServices } from 'app/mock-api';
+import { LayoutModule } from 'app/layout/layout.module';
+import { AppComponent } from 'app/app.component';
+import { appRoutes } from 'app/app.routing';
+
+const routerConfig: ExtraOptions = {
+    preloadingStrategy       : PreloadAllModules,
+    scrollPositionRestoration: 'enabled'
+};
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
-    TodoComponent,
-    TokenComponent
-  ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    FontAwesomeModule,
-    HttpClientModule,
-    FormsModule,
-    ApiAuthorizationModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    ModalModule.forRoot()
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent
+    ],
+    imports     : [
+        BrowserModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot(appRoutes, routerConfig),
+
+        // Fuse, FuseConfig & FuseMockAPI
+        FuseModule,
+        FuseConfigModule.forRoot(appConfig),
+        FuseMockApiModule.forRoot(mockApiServices),
+
+        // Core module of your application
+        CoreModule,
+
+        // Layout module of your application
+        LayoutModule,
+
+        // 3rd party modules that require global configuration via forRoot
+        MarkdownModule.forRoot({})
+    ],
+    bootstrap   : [
+        AppComponent
+    ]
 })
-export class AppModule { }
+export class AppModule
+{
+}
