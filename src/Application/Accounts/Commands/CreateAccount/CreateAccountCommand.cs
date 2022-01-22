@@ -7,19 +7,18 @@ namespace CleanArchitecture.Application.Accounts.Commands.CreateAccount;
 
 public class CreateAccountCommand : IRequest<int>
 {
-    public int ApplicationUserId { get; set; }
     public string? Name { get; set; }
 }
 
 public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, int>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IDateTime _dateTime;
+    private readonly ICurrentUserService _currentUserService;
 
-    public CreateAccountCommandHandler(IApplicationDbContext context, IDateTime dateTime)
+    public CreateAccountCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
-        _dateTime = dateTime;
+        _currentUserService = currentUserService;
     }
 
     public async Task<int> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
@@ -35,7 +34,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         var accountNumber = RandomDigits(19);
         var entity = new Account
         {
-            ApplicationUserId = request.ApplicationUserId,
+            ApplicationUserId = _currentUserService.UserId,
             AccountNumber = accountNumber,
             Name = request.Name,
             Amount = 0,

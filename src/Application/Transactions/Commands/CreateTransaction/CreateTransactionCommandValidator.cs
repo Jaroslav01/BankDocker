@@ -11,7 +11,10 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
 {
     public CreateTransactionCommandValidator()
     {
-        RuleFor(v => v.TransceiverAccountNumber)
+        RuleFor(v => v.ReceiverAccount)
+            .MaximumLength(200)
+            .NotEmpty();
+        RuleFor(v => v.SenderAccount)
             .MaximumLength(200)
             .NotEmpty();
     }

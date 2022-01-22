@@ -27,7 +27,7 @@ public class TransactionCreatedEventHandler : INotificationHandler<DomainEventNo
     public Task Handle(DomainEventNotification<TransactionCreatedEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
-        var transceiverAccount = _context.Accounts.FirstOrDefault(account => account.AccountNumber == domainEvent.Transaction.TransceiverAccountNumber);
+        var transceiverAccount = _context.Accounts.FirstOrDefault(account => account.AccountNumber == domainEvent.Transaction.SenderAccountNumber);
         var receiverAccount = _context.Accounts.FirstOrDefault(account => account.AccountNumber == domainEvent.Transaction.ReceiverAccountNumber);
 
         if (transceiverAccount == null) throw new NotImplementedException("transceiverAccount == null");

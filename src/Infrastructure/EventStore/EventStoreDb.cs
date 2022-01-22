@@ -13,7 +13,7 @@ namespace CleanArchitecture.Infrastructure.EventStore;
 public class EventStoreDb : IEventStoreDb
 {
     private readonly static EventStoreClientSettings Settings = EventStoreClientSettings
-    .Create("esdb://138.68.105.205:2113?tls=false");
+    .Create("esdb://165.22.75.144:2113?tls=false");
     private readonly EventStoreClient Client = new(Settings);
 
     public async Task Save(string type, string streamName, object entity, CancellationToken cancellationToken)

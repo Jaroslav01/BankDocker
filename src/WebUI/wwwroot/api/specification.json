@@ -520,10 +520,6 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "applicationUserId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "name": {
             "type": "string",
             "nullable": true
@@ -762,18 +758,17 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
+          "senderAccount": {
+            "type": "string"
+          },
+          "receiverAccount": {
+            "type": "string"
           },
           "amount": {
             "type": "integer",
             "format": "int64"
           },
-          "transceiverAccountNumber": {
-            "type": "string"
-          },
-          "receiverAccountNumber": {
+          "description": {
             "type": "string"
           }
         }

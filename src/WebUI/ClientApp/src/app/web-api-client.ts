@@ -791,7 +791,6 @@ export class WeatherForecastClient implements IWeatherForecastClient {
 }
 
 export class CreateAccountCommand implements ICreateAccountCommand {
-    applicationUserId?: number;
     name?: string | undefined;
 
     constructor(data?: ICreateAccountCommand) {
@@ -805,7 +804,6 @@ export class CreateAccountCommand implements ICreateAccountCommand {
 
     init(_data?: any) {
         if (_data) {
-            this.applicationUserId = _data["applicationUserId"];
             this.name = _data["name"];
         }
     }
@@ -819,14 +817,12 @@ export class CreateAccountCommand implements ICreateAccountCommand {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["applicationUserId"] = this.applicationUserId;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface ICreateAccountCommand {
-    applicationUserId?: number;
     name?: string | undefined;
 }
 
@@ -1366,10 +1362,10 @@ export interface IUpdateTodoListCommand {
 }
 
 export class CreateTransactionCommand implements ICreateTransactionCommand {
-    description?: string | undefined;
+    senderAccount?: string;
+    receiverAccount?: string;
     amount?: number;
-    transceiverAccountNumber?: string;
-    receiverAccountNumber?: string;
+    description?: string;
 
     constructor(data?: ICreateTransactionCommand) {
         if (data) {
@@ -1382,10 +1378,10 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
 
     init(_data?: any) {
         if (_data) {
-            this.description = _data["description"];
+            this.senderAccount = _data["senderAccount"];
+            this.receiverAccount = _data["receiverAccount"];
             this.amount = _data["amount"];
-            this.transceiverAccountNumber = _data["transceiverAccountNumber"];
-            this.receiverAccountNumber = _data["receiverAccountNumber"];
+            this.description = _data["description"];
         }
     }
 
@@ -1398,19 +1394,19 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["description"] = this.description;
+        data["senderAccount"] = this.senderAccount;
+        data["receiverAccount"] = this.receiverAccount;
         data["amount"] = this.amount;
-        data["transceiverAccountNumber"] = this.transceiverAccountNumber;
-        data["receiverAccountNumber"] = this.receiverAccountNumber;
+        data["description"] = this.description;
         return data; 
     }
 }
 
 export interface ICreateTransactionCommand {
-    description?: string | undefined;
+    senderAccount?: string;
+    receiverAccount?: string;
     amount?: number;
-    transceiverAccountNumber?: string;
-    receiverAccountNumber?: string;
+    description?: string;
 }
 
 export class WeatherForecast implements IWeatherForecast {

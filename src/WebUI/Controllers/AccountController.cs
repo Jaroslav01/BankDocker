@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Application.Accounts.Commands;
 using CleanArchitecture.Application.Accounts.Commands.CreateAccount;
+using CleanArchitecture.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,6 @@ namespace CleanArchitecture.WebUI.Controllers;
 public class AccountController : ControllerBase
 {
     private ISender _mediator = null!;
-
     protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
     [HttpPost("Create")]
