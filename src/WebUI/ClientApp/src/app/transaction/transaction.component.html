@@ -1,0 +1,83 @@
+<div class="card mb-4 bg-dark text-white" *ngFor="let account of accounts">
+  <div class="card-body">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          {{account.name}}
+        </div>
+        <div class="col">
+          {{account.amount / 100 | currency }}
+        </div>
+        <div class="col">
+          {{account.accountNumber}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <button type="button" class="btn btn-primary"
+    (click)="createAccountDialog()">
+      Create new account
+    </button>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <span>Send money:</span>
+    <hr>
+    <form action="transaction"
+          [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="senderAccount" class="form-label">Sender Account</label>
+        <input type="senderAccount" class="form-control" id="senderAccount" placeholder="Sender Account"
+               formControlName="senderAccount">
+      </div>
+      <div class="mb-3">
+        <label for="receiverAccount" class="form-label">Receiver Account</label>
+        <input type="receiverAccount" class="form-control" id="receiverAccount" placeholder="Receiver Account"
+               formControlName="receiverAccount">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">$</span>
+<!--        <span class="input-group-text">0</span>-->
+        <input type="text" class="form-control" aria-label="Amount" placeholder="Amount"
+               formControlName="amount">
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="email" class="form-control" id="description" placeholder="Description"
+               formControlName="description">
+      </div>
+      <div class="mb-3">
+        <button type="submit" [disabled]="!profileForm.valid" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let transaction of transactions">
+        <td>{{transaction.senderAccountNumber}}</td>
+        <td>{{transaction.receiverAccountNumber}}</td>
+        <td>{{transaction.amount / 100 | currency}}</td>
+        <td>{{transaction.description}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

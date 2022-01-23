@@ -5,7 +5,7 @@ namespace CleanArchitecture.Domain.Entities;
 
 public class Account : AuditableEntity, IHasDomainEvent
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string ApplicationUserId { get; set; }
     public string? AccountNumber { get; set; }
     public string? Name { get; set; }

@@ -1,6 +1,8 @@
 ﻿using CleanArchitecture.Application.Accounts.Commands;
 using CleanArchitecture.Application.Accounts.Commands.CreateAccount;
+using CleanArchitecture.Application.Accounts.Queries.GetCurrentUserAccounts;
 using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,5 +22,10 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<int>> Create(CreateAccountCommand command)
     {
         return await Mediator.Send(command);
+    }
+    [HttpGet("GetCurrentUserAccounts")]
+    public async Task<List<Account>> GetCurrentUserAccounts()
+    {
+        return await Mediator.Send(new GetCurrentUserAccountsQuery());
     }
 }

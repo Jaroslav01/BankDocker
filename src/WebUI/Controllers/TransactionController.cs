@@ -1,5 +1,7 @@
 ﻿using CleanArchitecture.Application.Transactions.Commands;
 using CleanArchitecture.Application.Transactions.Commands.CreateTransaction;
+using CleanArchitecture.Application.Transactions.Queries.GetCurrentUserTransactionsQuery;
+using CleanArchitecture.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,5 +22,11 @@ public class TransactionController : ControllerBase
     public async Task<ActionResult<int>> Create(CreateTransactionCommand command)
     {
         return await Mediator.Send(command);
+    }
+
+    [HttpGet("GetCurrentUserTransactions")]
+    public async Task<List<Transaction>> GetCurrentUserTransactions()
+    {
+        return await Mediator.Send(new GetCurrentUserTransactionsQuery()); ;
     }
 }

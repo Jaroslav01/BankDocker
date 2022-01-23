@@ -16,6 +16,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountClient {
     create(command: CreateAccountCommand): Observable<number>;
+    getCurrentUserAccounts(): Observable<Account[]>;
 }
 
 @Injectable({
@@ -81,6 +82,61 @@ export class AccountClient implements IAccountClient {
             }));
         }
         return _observableOf<number>(<any>null);
+    }
+
+    getCurrentUserAccounts() : Observable<Account[]> {
+        let url_ = this.baseUrl + "/api/Account/GetCurrentUserAccounts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCurrentUserAccounts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCurrentUserAccounts(<any>response_);
+                } catch (e) {
+                    return <Observable<Account[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Account[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCurrentUserAccounts(response: HttpResponseBase): Observable<Account[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Account.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Account[]>(<any>null);
     }
 }
 
@@ -649,6 +705,7 @@ export class TodoListsClient implements ITodoListsClient {
 
 export interface ITransactionClient {
     create(command: CreateTransactionCommand): Observable<number>;
+    getCurrentUserTransactions(): Observable<Transaction[]>;
 }
 
 @Injectable({
@@ -714,6 +771,61 @@ export class TransactionClient implements ITransactionClient {
             }));
         }
         return _observableOf<number>(<any>null);
+    }
+
+    getCurrentUserTransactions() : Observable<Transaction[]> {
+        let url_ = this.baseUrl + "/api/Transaction/GetCurrentUserTransactions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCurrentUserTransactions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCurrentUserTransactions(<any>response_);
+                } catch (e) {
+                    return <Observable<Transaction[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Transaction[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCurrentUserTransactions(response: HttpResponseBase): Observable<Transaction[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Transaction.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Transaction[]>(<any>null);
     }
 }
 
@@ -824,6 +936,228 @@ export class CreateAccountCommand implements ICreateAccountCommand {
 
 export interface ICreateAccountCommand {
     name?: string | undefined;
+}
+
+export abstract class AuditableEntity implements IAuditableEntity {
+    created?: Date;
+    createdBy?: string | undefined;
+    lastModified?: Date | undefined;
+    lastModifiedBy?: string | undefined;
+
+    constructor(data?: IAuditableEntity) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.createdBy = _data["createdBy"];
+            this.lastModified = _data["lastModified"] ? new Date(_data["lastModified"].toString()) : <any>undefined;
+            this.lastModifiedBy = _data["lastModifiedBy"];
+        }
+    }
+
+    static fromJS(data: any): AuditableEntity {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'AuditableEntity' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["createdBy"] = this.createdBy;
+        data["lastModified"] = this.lastModified ? this.lastModified.toISOString() : <any>undefined;
+        data["lastModifiedBy"] = this.lastModifiedBy;
+        return data; 
+    }
+}
+
+export interface IAuditableEntity {
+    created?: Date;
+    createdBy?: string | undefined;
+    lastModified?: Date | undefined;
+    lastModifiedBy?: string | undefined;
+}
+
+export class Account extends AuditableEntity implements IAccount {
+    id?: number;
+    applicationUserId?: string;
+    accountNumber?: string | undefined;
+    name?: string | undefined;
+    amount?: number;
+    transactions?: Transaction[];
+    done?: boolean;
+    domainEvents?: DomainEvent[];
+
+    constructor(data?: IAccount) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.id = _data["id"];
+            this.applicationUserId = _data["applicationUserId"];
+            this.accountNumber = _data["accountNumber"];
+            this.name = _data["name"];
+            this.amount = _data["amount"];
+            if (Array.isArray(_data["transactions"])) {
+                this.transactions = [] as any;
+                for (let item of _data["transactions"])
+                    this.transactions!.push(Transaction.fromJS(item));
+            }
+            this.done = _data["done"];
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(DomainEvent.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): Account {
+        data = typeof data === 'object' ? data : {};
+        let result = new Account();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["applicationUserId"] = this.applicationUserId;
+        data["accountNumber"] = this.accountNumber;
+        data["name"] = this.name;
+        data["amount"] = this.amount;
+        if (Array.isArray(this.transactions)) {
+            data["transactions"] = [];
+            for (let item of this.transactions)
+                data["transactions"].push(item.toJSON());
+        }
+        data["done"] = this.done;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IAccount extends IAuditableEntity {
+    id?: number;
+    applicationUserId?: string;
+    accountNumber?: string | undefined;
+    name?: string | undefined;
+    amount?: number;
+    transactions?: Transaction[];
+    done?: boolean;
+    domainEvents?: DomainEvent[];
+}
+
+export class Transaction extends AuditableEntity implements ITransaction {
+    id?: number;
+    description?: string | undefined;
+    amount?: number;
+    senderAccountNumber?: string;
+    receiverAccountNumber?: string;
+    domainEvents?: DomainEvent[];
+
+    constructor(data?: ITransaction) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.id = _data["id"];
+            this.description = _data["description"];
+            this.amount = _data["amount"];
+            this.senderAccountNumber = _data["senderAccountNumber"];
+            this.receiverAccountNumber = _data["receiverAccountNumber"];
+            if (Array.isArray(_data["domainEvents"])) {
+                this.domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    this.domainEvents!.push(DomainEvent.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): Transaction {
+        data = typeof data === 'object' ? data : {};
+        let result = new Transaction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["description"] = this.description;
+        data["amount"] = this.amount;
+        data["senderAccountNumber"] = this.senderAccountNumber;
+        data["receiverAccountNumber"] = this.receiverAccountNumber;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface ITransaction extends IAuditableEntity {
+    id?: number;
+    description?: string | undefined;
+    amount?: number;
+    senderAccountNumber?: string;
+    receiverAccountNumber?: string;
+    domainEvents?: DomainEvent[];
+}
+
+export abstract class DomainEvent implements IDomainEvent {
+    isPublished?: boolean;
+    dateOccurred?: Date;
+
+    constructor(data?: IDomainEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isPublished = _data["isPublished"];
+            this.dateOccurred = _data["dateOccurred"] ? new Date(_data["dateOccurred"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DomainEvent {
+        data = typeof data === 'object' ? data : {};
+        throw new Error("The abstract class 'DomainEvent' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isPublished"] = this.isPublished;
+        data["dateOccurred"] = this.dateOccurred ? this.dateOccurred.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDomainEvent {
+    isPublished?: boolean;
+    dateOccurred?: Date;
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {

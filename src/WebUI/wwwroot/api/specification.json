@@ -44,6 +44,34 @@
         ]
       }
     },
+    "/api/Account/GetCurrentUserAccounts": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "Account_GetCurrentUserAccounts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -490,6 +518,34 @@
         ]
       }
     },
+    "/api/Transaction/GetCurrentUserTransactions": {
+      "get": {
+        "tags": [
+          "Transaction"
+        ],
+        "operationId": "Transaction_GetCurrentUserTransactions",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/WeatherForecast": {
       "get": {
         "tags": [
@@ -521,6 +577,128 @@
         "additionalProperties": false,
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Account": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "applicationUserId": {
+                "type": "string"
+              },
+              "accountNumber": {
+                "type": "string",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "amount": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "transactions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              },
+              "done": {
+                "type": "boolean"
+              },
+              "domainEvents": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DomainEvent"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Transaction": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "amount": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "senderAccountNumber": {
+                "type": "string"
+              },
+              "receiverAccountNumber": {
+                "type": "string"
+              },
+              "domainEvents": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DomainEvent"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "DomainEvent": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "isPublished": {
+            "type": "boolean"
+          },
+          "dateOccurred": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuditableEntity": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModifiedBy": {
             "type": "string",
             "nullable": true
           }

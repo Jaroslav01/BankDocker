@@ -50,4 +50,10 @@ public static class ApplicationDbContextSeed
             await context.SaveChangesAsync();
         }
     }
+
+    public static async Task SeedBankAccountAsync(ApplicationDbContext context)
+    {
+
+    }
+
 }
