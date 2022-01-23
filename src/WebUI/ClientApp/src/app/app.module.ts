@@ -1,3 +1,4 @@
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -49,6 +50,4 @@ import { CreateAccountComponent } from './account/create-account/create-account.
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule
-{
-}
+export class AppModule { }
