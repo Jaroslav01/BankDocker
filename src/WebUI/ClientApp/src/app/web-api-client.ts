@@ -1065,6 +1065,9 @@ export class Transaction extends AuditableEntity implements ITransaction {
     id?: number;
     description?: string | undefined;
     amount?: number;
+    commissionFromTheSender?: number;
+    commissionFromTheReceiver?: number;
+    commissionType?: number;
     senderAccountNumber?: string;
     receiverAccountNumber?: string;
     domainEvents?: DomainEvent[];
@@ -1079,6 +1082,9 @@ export class Transaction extends AuditableEntity implements ITransaction {
             this.id = _data["id"];
             this.description = _data["description"];
             this.amount = _data["amount"];
+            this.commissionFromTheSender = _data["commissionFromTheSender"];
+            this.commissionFromTheReceiver = _data["commissionFromTheReceiver"];
+            this.commissionType = _data["commissionType"];
             this.senderAccountNumber = _data["senderAccountNumber"];
             this.receiverAccountNumber = _data["receiverAccountNumber"];
             if (Array.isArray(_data["domainEvents"])) {
@@ -1101,6 +1107,9 @@ export class Transaction extends AuditableEntity implements ITransaction {
         data["id"] = this.id;
         data["description"] = this.description;
         data["amount"] = this.amount;
+        data["commissionFromTheSender"] = this.commissionFromTheSender;
+        data["commissionFromTheReceiver"] = this.commissionFromTheReceiver;
+        data["commissionType"] = this.commissionType;
         data["senderAccountNumber"] = this.senderAccountNumber;
         data["receiverAccountNumber"] = this.receiverAccountNumber;
         if (Array.isArray(this.domainEvents)) {
@@ -1117,6 +1126,9 @@ export interface ITransaction extends IAuditableEntity {
     id?: number;
     description?: string | undefined;
     amount?: number;
+    commissionFromTheSender?: number;
+    commissionFromTheReceiver?: number;
+    commissionType?: number;
     senderAccountNumber?: string;
     receiverAccountNumber?: string;
     domainEvents?: DomainEvent[];
@@ -1700,6 +1712,7 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
     receiverAccount?: string;
     amount?: number;
     description?: string;
+    commissionType?: number;
 
     constructor(data?: ICreateTransactionCommand) {
         if (data) {
@@ -1716,6 +1729,7 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
             this.receiverAccount = _data["receiverAccount"];
             this.amount = _data["amount"];
             this.description = _data["description"];
+            this.commissionType = _data["commissionType"];
         }
     }
 
@@ -1732,6 +1746,7 @@ export class CreateTransactionCommand implements ICreateTransactionCommand {
         data["receiverAccount"] = this.receiverAccount;
         data["amount"] = this.amount;
         data["description"] = this.description;
+        data["commissionType"] = this.commissionType;
         return data; 
     }
 }
@@ -1741,6 +1756,7 @@ export interface ICreateTransactionCommand {
     receiverAccount?: string;
     amount?: number;
     description?: string;
+    commissionType?: number;
 }
 
 export class WeatherForecast implements IWeatherForecast {

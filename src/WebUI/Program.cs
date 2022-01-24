@@ -1,5 +1,7 @@
+using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +29,7 @@ public class Program
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager);
+                await ApplicationDbContextSeed.SeedDefaultUserAsync(userManager, roleManager, context, CancellationToken.None);
                 await ApplicationDbContextSeed.SeedSampleDataAsync(context);
             }
             catch (Exception ex)
@@ -46,5 +48,7 @@ public class Program
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
-                webBuilder.UseStartup<Startup>().UseUrls("https://0.0.0.0:5001"));
+                webBuilder.UseStartup<Startup>()
+                    //.UseUrls("https://0.0.0.0:5001")
+                );
 }

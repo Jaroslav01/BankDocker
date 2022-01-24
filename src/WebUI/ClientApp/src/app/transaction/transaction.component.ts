@@ -16,8 +16,9 @@ export class TransactionComponent implements OnInit {
     private accountClient: AccountClient,
     private dialog: MatDialog
   ) { }
-  public accounts: Account[] = [];
-  public transactions: Transaction[] = [];
+
+  public accounts: Account[] | null = null;
+  public transactions: Transaction[] | null = null;
   ngOnInit(): void {
     this.accountClient.getCurrentUserAccounts().subscribe(response => {
       this.accounts = response;
@@ -46,9 +47,13 @@ export class TransactionComponent implements OnInit {
     description: new FormControl('', [
       Validators.required
     ]),
+    commissionType: new FormControl(0, [
+      Validators.required
+    ]),
   });
 
   onSubmit() {
+    console.log(this.profileForm.value)
     this.transactionClient.create(this.profileForm.value).subscribe(response =>{
       console.log(response)
     })
@@ -56,5 +61,13 @@ export class TransactionComponent implements OnInit {
 
   createAccountDialog(){
     this.dialog.open(CreateAccountComponent)
+  }
+
+  summAmount(): number{
+    let summ: number = 0;
+    this.accounts.forEach(account => {
+      summ += account.amount
+    })
+    return summ;
   }
 }

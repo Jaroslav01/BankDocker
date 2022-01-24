@@ -16,6 +16,23 @@
   </div>
 </div>
 
+<div class="spinner-grow mb-4 align-self-center d-block mx-auto" style="width: 3rem; height: 3rem;" role="status"
+    *ngIf="!accounts">
+  <span class="sr-only">Loading...</span>
+</div>
+
+<div class="card mb-4 bg-dark text-white account-summ"
+     *ngIf="accounts">
+  <div class="card-body"
+       *ngIf="accounts.length != 0">
+    <span>Сумма: {{summAmount() / 100 | currency}}</span>
+  </div>
+  <div class="card-body"
+       *ngIf="accounts.length == 0">
+    No accounts
+  </div>
+</div>
+
 <div class="card mb-4">
   <div class="card-body">
     <button type="button" class="btn btn-primary"
@@ -52,6 +69,13 @@
         <input type="email" class="form-control" id="description" placeholder="Description"
                formControlName="description">
       </div>
+      <select class="form-select" aria-label="Default select example"
+          formControlName="commissionType">
+        <option selected>Commission:</option>
+        <option value="0">From sender</option>
+        <option value="1">From receiver</option>
+        <option value="2">In half</option>
+      </select>
       <div class="mb-3">
         <button type="submit" [disabled]="!profileForm.valid" class="btn btn-primary">Submit</button>
       </div>
@@ -59,15 +83,21 @@
   </div>
 </div>
 
-<div class="card">
-  <div class="card-body">
-    <table class="table">
+<div class="card mb-4"
+    *ngIf="transactions">
+  <div class="card-body text-center">
+    <span *ngIf="transactions.length == 0">
+      No operations yet
+    </span>
+    <table class="table"
+        *ngIf="transactions.length != 0">
       <thead>
       <tr>
         <th scope="col">From</th>
         <th scope="col">To</th>
         <th scope="col">Amount</th>
         <th scope="col">Description</th>
+        <th scope="col">Date</th>
       </tr>
       </thead>
       <tbody>
@@ -76,8 +106,14 @@
         <td>{{transaction.receiverAccountNumber}}</td>
         <td>{{transaction.amount / 100 | currency}}</td>
         <td>{{transaction.description}}</td>
+        <td>{{transaction.created | date: 'medium'}}</td>
       </tr>
       </tbody>
     </table>
   </div>
+</div>
+
+<div class="spinner-grow mb-4 align-self-center d-block mx-auto" style="width: 3rem; height: 3rem;" role="status"
+     *ngIf="!transactions">
+  <span class="sr-only">Loading...</span>
 </div>

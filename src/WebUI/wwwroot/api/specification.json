@@ -650,6 +650,18 @@
                 "type": "integer",
                 "format": "int64"
               },
+              "commissionFromTheSender": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "commissionFromTheReceiver": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "commissionType": {
+                "type": "integer",
+                "format": "int32"
+              },
               "senderAccountNumber": {
                 "type": "string"
               },
@@ -948,6 +960,10 @@
           },
           "description": {
             "type": "string"
+          },
+          "commissionType": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

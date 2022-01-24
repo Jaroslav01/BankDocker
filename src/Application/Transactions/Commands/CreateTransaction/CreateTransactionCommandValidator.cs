@@ -17,5 +17,6 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
         RuleFor(v => v.SenderAccount)
             .MaximumLength(200)
             .NotEmpty();
+
     }
 }

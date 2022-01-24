@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CleanArchitecture.Application.Accounts.Queries.GetCurrentUserAccounts;
 using CleanArchitecture.Application.Common.Interfaces;
 using CleanArchitecture.Application.Common.Models;
+using CleanArchitecture.Application.Transactions.Queries.GetTransactionsByUserIdQuery;
+using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Domain.Events;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace CleanArchitecture.Application.Transactions.EventHandlers;
@@ -15,13 +19,15 @@ public class TransactionCreatedEventHandler : INotificationHandler<DomainEventNo
 {
     private readonly ILogger<TransactionCreatedEventHandler> _logger;
     private readonly IApplicationDbContext _context;
-    private readonly IDateTime _dateTime;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ISender _mediator;
 
-    public TransactionCreatedEventHandler(ILogger<TransactionCreatedEventHandler> logger, IApplicationDbContext context, IDateTime dateTime)
+    public TransactionCreatedEventHandler(ILogger<TransactionCreatedEventHandler> logger, IApplicationDbContext context, UserManager<ApplicationUser> userManager, ISender mediator)
     {
         _logger = logger;
         _context = context;
-        _dateTime = dateTime;
+        _userManager = userManager;
+        _mediator = mediator;
     }
 
     public Task Handle(DomainEventNotification<TransactionCreatedEvent> notification, CancellationToken cancellationToken)
@@ -33,11 +39,7 @@ public class TransactionCreatedEventHandler : INotificationHandler<DomainEventNo
         if (transceiverAccount == null) throw new NotImplementedException("transceiverAccount == null");
         if (receiverAccount == null) throw new NotImplementedException("receiverAccount == null");
 
-        transceiverAccount.Amount -= domainEvent.Transaction.Amount;
-        receiverAccount.Amount += domainEvent.Transaction.Amount;
-
-        transceiverAccount.DomainEvents.Add(new AccountCreatedEvent(transceiverAccount));
-        receiverAccount.DomainEvents.Add(new AccountCreatedEvent(receiverAccount));
+        
 
         _context.SaveChangesAsync(cancellationToken).Wait();
 

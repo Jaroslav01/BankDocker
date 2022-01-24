@@ -35,7 +35,17 @@ public class GetCurrentUserTransactionsQueryHandler : IRequestHandler<GetCurrent
     public async Task<List<Transaction>> Handle(GetCurrentUserTransactionsQuery request, CancellationToken cancellationToken)
     {
         var accounts = await _mediator.Send(new GetCurrentUserAccountsQuery());
-        var transactions = _context.Transactions.Where(transaction => IsContainedAccountNumber(accounts, transaction)).ToList();//ERROR
+        var transactions = new List<Transaction>();
+            //= _context.Transactions.Where(transaction => IsContainedAccountNumber(accounts, transaction)).ToList();
+            foreach (var account in accounts)
+            {
+                var currentAccountTransactions = _context.Transactions.Where(transaction =>
+                    transaction.SenderAccountNumber == account.AccountNumber ||
+                    transaction.ReceiverAccountNumber == account.AccountNumber
+                ).ToList();
+                transactions.AddRange(currentAccountTransactions);
+            }
+            transactions.Sort((x, y) => y.Created.CompareTo(x.Created)); ;
         return transactions;
     }
 }

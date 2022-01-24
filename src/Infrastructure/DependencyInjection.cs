@@ -1,4 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.EventStore;
 using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Identity;
@@ -30,7 +31,7 @@ public static class DependencyInjection
         }
         services.AddEventStoreClient(configuration.GetConnectionString("EventStoreConnectionString"));
         services.AddSingleton<IEventStoreDb, EventStoreDb>();
-        //services.AddSingleton<EventStoreDb>();
+        //services.AddSingleton<RoleManager<IdentityRole>>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<IDomainEventService, DomainEventService>();
