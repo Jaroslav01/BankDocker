@@ -17,7 +17,7 @@ services:
       - webui
     restart: on-failure
 
-  db:
-    container_name: "BankSQLServer"
-    ports:
-      - "1433:1433"
+  #db:
+  #  container_name: "BankSQLServer"
+  #  ports:
+  #    - "1433:1433"
